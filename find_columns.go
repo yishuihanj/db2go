@@ -90,14 +90,52 @@ func FindColumns(_tableName string) ([]*Column, error) {
 func ColumnsToStruct() string {
 	columnString := ""
 	for _, column := range columns {
-		singleString := fmt.Sprintf("	%s	%s\n", splitUnderline(column.ColumnName), typeConvert(column.ColumnType))
+		singleString := fmt.Sprintf("\t%s\t%s", splitUnderline(column.ColumnName), typeConvert(column.ColumnType))
+
+		//
+		singleString = singleString + addGormTag(column) + "\n"
 		columnString += singleString
+
 	}
-	return fmt.Sprintf("type %s struct {\n%s}", splitUnderline(tableName), columnString)
+	return fmt.Sprintf("package main\ntype %s struct {\n%s}", splitUnderline(tableName), columnString)
+}
+
+func addGormTag(column *Column) string {
+	if !gorm {
+		return ""
+	}
+	tag := fmt.Sprintf("\t`gorm:\"column:%s", column.ColumnName)
+	if column.NotNull == "true" {
+		tag += fmt.Sprintf(";not null")
+	}
+	if column.DefaultValue != "" {
+		tag += fmt.Sprintf(";default:%s", column.DefaultValue)
+	}
+	if column.IsPrimaryKey == "true" {
+		tag += fmt.Sprintf(";primaryKey")
+	}
+	if column.ColumnType != "" {
+		tag += fmt.Sprintf(";type:%s", column.ColumnType)
+	}
+	if column.Comment != "" {
+		tag += fmt.Sprintf(";commnet:'%s'", column.Comment)
+	}
+	end := fmt.Sprintf("\"`")
+	return tag + end
 }
 
 //Convert the SQL type to go type
 func typeConvert(s string) string {
+
+	if strings.Contains(s, "[]") {
+		if strings.Contains(s, "char") || strings.Contains(s, "text") {
+			return "pq.StringArray"
+		}
+		if strings.Contains(s, "integer") {
+			return "pq.Int64Array"
+		}
+	}
+
 	if strings.Contains(s, "char") || in(s, []string{"text"}) {
 		return "string"
 	}
@@ -122,9 +160,7 @@ func typeConvert(s string) string {
 	if strings.Contains(s, "time") || in(s, []string{"date"}) {
 		return "time.Time"
 	}
-	if in(s, []string{"integer[]"}) {
-		return "pq.Int64Array"
-	}
+
 	return "interface{}"
 }
 
