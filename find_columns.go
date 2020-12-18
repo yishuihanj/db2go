@@ -108,7 +108,7 @@ func addGormTag(column *Column) string {
 	if column.NotNull == "true" {
 		tag += fmt.Sprintf(";not null")
 	}
-	if column.DefaultValue != "" {
+	if column.DefaultValue != "" && column.IsPrimaryKey != "false" {
 		tag += fmt.Sprintf(";default:%s", column.DefaultValue)
 	}
 	if column.IsPrimaryKey == "true" {
