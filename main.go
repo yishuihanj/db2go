@@ -19,7 +19,7 @@ var (
 	tableName,
 	outDir string
 	port    int
-	tables  []*findSql.Table
+	tables  []string
 	columns []*findSql.Column
 )
 
@@ -62,17 +62,26 @@ func main() {
 		fmt.Println("错误! 查看数据库表失败：", err.Error())
 		return
 	}
+	if len(tables) == 0 {
+		fmt.Println("警告：当前数据库中数据库表的数量为0，程序退出...")
+		return
+	}
+
 	if tableName == "" {
 		fmt.Println("警告：没有设置table，将要导出数据库所有的表...")
-		for _, table := range tables {
-			columns, err = findSql.FindColumns(db, table.Name)
+		for _, tName := range tables {
+			columns, err = findSql.FindColumns(db, tName)
 			if err != nil {
 				fmt.Printf("错误! 查找数据库表 '%s'  包含的列失败：%v", tableName, err.Error())
 				return
 			}
-			utils.CreateFile(table.Name, findSql.ColumnsToStruct(table.Name, columns), outDir)
+			utils.CreateFile(tName, findSql.ColumnsToStruct(tName, columns), outDir)
 		}
 	} else {
+		if !utils.In(tableName, tables) {
+			fmt.Println("错误：数据库中没有您想要导出的数据库表，程序退出...")
+			return
+		}
 		columns, err = findSql.FindColumns(db, tableName)
 		if err != nil {
 			fmt.Printf("错误! 查找数据库表 '%s'  包含的列失败：%v", tableName, err.Error())
