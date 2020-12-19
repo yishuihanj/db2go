@@ -4,8 +4,8 @@ import (
 	"database/sql"
 	"flag"
 	"fmt"
-	_ "github.com/lib/pq"
 	"os"
+	"pgtogo/utils"
 )
 
 var (
@@ -30,18 +30,8 @@ func init() {
 	flag.StringVar(&pwd, "pwd", "postgres", "数据库密码，默认为postgres")
 	flag.StringVar(&dbName, "dbname", "", "数据库名称，必填，否则会报错")
 	flag.StringVar(&tableName, "table", "", "需要导出的数据库表名称，如果不设置的话会将该数据库所有的表导出")
-	flag.BoolVar(&gorm, "gorm", false, "是否添加 gorm tag，默认不添加")
-	flag.StringVar(&outDir, "outdir", ".", ".go 文件输出路径，不设置的话会输出到当前程序所在路径")
-}
-
-//连接pgsql数据库
-func initPgSql() (*sql.DB, error) {
-	dataSourceName := fmt.Sprintf("user=%s password=%s host=%s port=%d dbname=%s sslmode=disable", userName, pwd, host, port, dbName)
-	_db, err := sql.Open("postgres", dataSourceName)
-	if err != nil {
-		return nil, err
-	}
-	return _db, nil
+	flag.BoolVar(&gorm, "gorm", false, "是否添加 gorm tag，true添加，false不添加，默认不添加")
+	flag.StringVar(&outDir, "outdir", "./pg_output", ".go 文件输出路径，不设置的话会输出到当前程序所在路径")
 }
 
 func main() {
@@ -60,7 +50,7 @@ func main() {
 		flag.PrintDefaults()
 	}
 
-	db, err = initPgSql()
+	db, err = utils.InitPgSql(userName, pwd, host, port, dbName)
 	if err != nil {
 		fmt.Println("错误! 连接数据库失败：", err.Error())
 		return
@@ -75,13 +65,12 @@ func main() {
 	if tableName == "" {
 		fmt.Println("警告：没有设置table，将要导出数据库所有的表...")
 		for _, table := range tables {
-			tableName = table.Name
-			columns, err = FindColumns(tableName)
+			columns, err = FindColumns(table.Name)
 			if err != nil {
 				fmt.Printf("错误! 查找数据库表 '%s'  包含的列失败：%v", tableName, err.Error())
 				return
 			}
-			CreateFile(ColumnsToStruct())
+			utils.CreateFile(table.Name, ColumnsToStruct(table.Name), outDir)
 		}
 	} else {
 		columns, err = FindColumns(tableName)
@@ -89,25 +78,6 @@ func main() {
 			fmt.Printf("错误! 查找数据库表 '%s'  包含的列失败：%v", tableName, err.Error())
 			return
 		}
-		CreateFile(ColumnsToStruct())
+		utils.CreateFile(tableName, ColumnsToStruct(tableName), outDir)
 	}
-}
-
-//创建文件
-func CreateFile(s string) error {
-	f, err := os.Create(fmt.Sprintf("%s/%s.go", outDir, splitUnderline(tableName)))
-	defer f.Close()
-	if err != nil {
-		fmt.Printf("错误! 创建 %s.go 文件失败，err:%v", splitUnderline(tableName), err.Error())
-		return err
-	} else {
-		_, err = f.Write([]byte(s))
-		if err != nil {
-			fmt.Printf("错误! 创建 %s.go 文件失败，err:%v", splitUnderline(tableName), err.Error())
-			return err
-		}
-	}
-	fmt.Printf("创建 %s.go 文件成功，路径为：%s\n", splitUnderline(tableName), f.Name())
-	return nil
-
 }
