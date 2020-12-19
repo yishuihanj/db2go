@@ -15,10 +15,10 @@ func TypeConvert(s string) string {
 			return "pq.Int64Array"
 		}
 	}
-	if strings.Contains(s, "char") || In(s, []string{"text"}) {
+	if strings.Contains(s, "char") || In(s, []string{"text", "longtext"}) {
 		return "string"
 	}
-	if In(s, []string{"bigserial", "serial", "big serial"}) {
+	if In(s, []string{"bigserial", "serial", "big serial", "int"}) {
 		return "int"
 	}
 	if In(s, []string{"bigint"}) {

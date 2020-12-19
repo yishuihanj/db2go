@@ -1,4 +1,4 @@
-package findSql
+package pgsql
 
 //find table sql
 var findTableSql = `SELECT 

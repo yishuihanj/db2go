@@ -1,9 +1,10 @@
-package findSql
+package find_sql
 
 import (
-	"database/sql"
 	"fmt"
+	"pgtogo/interface_sql"
 	"pgtogo/utils"
+	"strings"
 )
 
 var Gorm bool
@@ -18,8 +19,9 @@ type Column struct {
 }
 
 //查找表中的字段
-func FindColumns(db *sql.DB, _tableName string) ([]*Column, error) {
-	rows, err := db.Query(findColumnSql, _tableName)
+func FindColumns(sqlInterface interface_sql.SqlInterface, _tableName string) ([]*Column, error) {
+	db := sqlInterface.GetDB()
+	rows, err := db.Query(sqlInterface.FindColumnsString(), _tableName)
 	if err != nil {
 		return nil, err
 	}
@@ -67,6 +69,9 @@ func addGormTag(column *Column) string {
 		tag += fmt.Sprintf(";not null")
 	}
 	if column.DefaultValue != "" && column.IsPrimaryKey != "true" {
+		if strings.Contains(column.DefaultValue, "''") { //如果有 ''则置为 空字符串
+			column.DefaultValue = fmt.Sprintf("''")
+		}
 		tag += fmt.Sprintf(";default:%s", column.DefaultValue)
 	}
 	if column.IsPrimaryKey == "true" {

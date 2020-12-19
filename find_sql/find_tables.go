@@ -1,11 +1,13 @@
-package findSql
+package find_sql
 
 import (
-	"database/sql"
+	"pgtogo/interface_sql"
 )
 
-func FindTables(db *sql.DB) ([]string, error) {
-	rows, err := db.Query(findTableSql)
+//查找该数据库的数据库表
+func FindTables(model interface_sql.SqlInterface) ([]string, error) {
+	db := model.GetDB()
+	rows, err := db.Query(model.FindTableString())
 	if err != nil {
 		return nil, err
 	}

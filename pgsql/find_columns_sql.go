@@ -1,4 +1,4 @@
-package findSql
+package pgsql
 
 var findColumnSql = `SELECT A.attname AS COLUMN_NAME,
 	A.attnotnull AS not_null,

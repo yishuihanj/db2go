@@ -1,21 +1,10 @@
 package utils
 
 import (
-	"database/sql"
 	"fmt"
 	_ "github.com/lib/pq"
 	"strings"
 )
-
-//连接pgsql数据库
-func InitPgSql(userName, pwd, host string, port int, dbName string) (*sql.DB, error) {
-	dataSourceName := fmt.Sprintf("user=%s password=%s host=%s port=%d dbname=%s sslmode=disable", userName, pwd, host, port, dbName)
-	_db, err := sql.Open("postgres", dataSourceName)
-	if err != nil {
-		return nil, err
-	}
-	return _db, nil
-}
 
 //如果字符串有下滑线的则将下划线除去 并开头字母大写  例如   v1_user 变为  V1User
 func SplitUnderline(s string) string {
@@ -35,4 +24,23 @@ func In(s string, arr []string) bool {
 		}
 	}
 	return false
+}
+
+func CheckFlagParse(port int, user, pwd, dbname, driver string) string {
+	if port <= 0 {
+		return fmt.Sprintf("错误：port 必填，程序退出...")
+	}
+	if user == "" {
+		return fmt.Sprintf("错误：user 必填，程序退出...")
+	}
+	if pwd == "" {
+		return fmt.Sprintf("错误：pwd 必填，程序退出...")
+	}
+	if dbname == "" {
+		return fmt.Sprintf("错误：dbname 必填，程序退出...")
+	}
+	if driver == "" {
+		return fmt.Sprintf("错误：driver 必填，程序退出...")
+	}
+	return ""
 }
