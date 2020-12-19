@@ -1,6 +1,6 @@
 package findSql
 
-var FindColumnSql = `SELECT A.attname AS COLUMN_NAME,
+var findColumnSql = `SELECT A.attname AS COLUMN_NAME,
 	A.attnotnull AS not_null,
 	COALESCE ( pg_get_expr ( ad.adbin, ad.adrelid ), '' ) AS default_value,
 	COALESCE ( ct.contype = 'p', FALSE ) AS is_primary_key,

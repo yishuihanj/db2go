@@ -1,8 +1,7 @@
-package main
+package findSql
 
 import (
 	"database/sql"
-	"pgtogo/findSql"
 )
 
 type Table struct {
@@ -10,8 +9,8 @@ type Table struct {
 	Comment sql.NullString
 }
 
-func FindTables() ([]*Table, error) {
-	rows, err := db.Query(findSql.FindTableSql)
+func FindTables(db *sql.DB) ([]*Table, error) {
+	rows, err := db.Query(findTableSql)
 	if err != nil {
 		return nil, err
 	}

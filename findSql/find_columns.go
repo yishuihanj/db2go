@@ -1,10 +1,12 @@
-package main
+package findSql
 
 import (
+	"database/sql"
 	"fmt"
-	"pgtogo/findSql"
 	"pgtogo/utils"
 )
+
+var Gorm bool
 
 type Column struct {
 	ColumnName   string //字段名
@@ -16,8 +18,8 @@ type Column struct {
 }
 
 //查找表中的字段
-func FindColumns(_tableName string) ([]*Column, error) {
-	rows, err := db.Query(findSql.FindColumnSql, _tableName)
+func FindColumns(db *sql.DB, _tableName string) ([]*Column, error) {
+	rows, err := db.Query(findColumnSql, _tableName)
 	if err != nil {
 		return nil, err
 	}
@@ -41,7 +43,7 @@ func FindColumns(_tableName string) ([]*Column, error) {
 }
 
 //将字段名转换成结构体字段   不包含tag
-func ColumnsToStruct(_tableName string) string {
+func ColumnsToStruct(_tableName string, columns []*Column) string {
 	columnString := ""
 	for _, column := range columns {
 		singleString := fmt.Sprintf("\t%s\t%s", utils.SplitUnderline(column.ColumnName), utils.TypeConvert(column.ColumnType))
@@ -57,7 +59,7 @@ func ColumnsToStruct(_tableName string) string {
 //向字段中添加 Gorm tag
 func addGormTag(column *Column) string {
 	//如果没有开启gorm 则 不需要转换
-	if !gorm {
+	if !Gorm {
 		return ""
 	}
 	tag := fmt.Sprintf("\t`gorm:\"column:%s", column.ColumnName)

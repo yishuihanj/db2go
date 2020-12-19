@@ -1,9 +1,7 @@
 package findSql
 
-import "database/sql"
-
 //find table sql
-var FindTableSql = `SELECT 
+var findTableSql = `SELECT 
 	A.relname AS NAME,
 	COALESCE(b.description,'') AS COMMENT 
 FROM
@@ -16,8 +14,3 @@ WHERE
 	AND A.relkind = 'r'
 ORDER BY
 	A.relname`
-
-type Table struct {
-	Name    string
-	Comment sql.NullString
-}

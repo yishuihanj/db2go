@@ -5,6 +5,7 @@ import (
 	"flag"
 	"fmt"
 	"os"
+	"pgtogo/findSql"
 	"pgtogo/utils"
 )
 
@@ -18,9 +19,8 @@ var (
 	tableName,
 	outDir string
 	port    int
-	tables  []*Table
-	columns []*Column
-	gorm    bool
+	tables  []*findSql.Table
+	columns []*findSql.Column
 )
 
 func init() {
@@ -30,7 +30,7 @@ func init() {
 	flag.StringVar(&pwd, "pwd", "postgres", "数据库密码，默认为postgres")
 	flag.StringVar(&dbName, "dbname", "", "数据库名称，必填，否则会报错")
 	flag.StringVar(&tableName, "table", "", "需要导出的数据库表名称，如果不设置的话会将该数据库所有的表导出")
-	flag.BoolVar(&gorm, "gorm", false, "是否添加 gorm tag，true添加，false不添加，默认不添加")
+	flag.BoolVar(&findSql.Gorm, "gorm", false, "是否添加 gorm tag，true添加，false不添加，默认不添加")
 	flag.StringVar(&outDir, "outdir", "./pg_output", ".go 文件输出路径，不设置的话会输出到当前程序所在路径")
 }
 
@@ -57,7 +57,7 @@ func main() {
 	}
 	defer db.Close()
 
-	tables, err = FindTables()
+	tables, err = findSql.FindTables(db)
 	if err != nil {
 		fmt.Println("错误! 查看数据库表失败：", err.Error())
 		return
@@ -65,19 +65,19 @@ func main() {
 	if tableName == "" {
 		fmt.Println("警告：没有设置table，将要导出数据库所有的表...")
 		for _, table := range tables {
-			columns, err = FindColumns(table.Name)
+			columns, err = findSql.FindColumns(db, table.Name)
 			if err != nil {
 				fmt.Printf("错误! 查找数据库表 '%s'  包含的列失败：%v", tableName, err.Error())
 				return
 			}
-			utils.CreateFile(table.Name, ColumnsToStruct(table.Name), outDir)
+			utils.CreateFile(table.Name, findSql.ColumnsToStruct(table.Name, columns), outDir)
 		}
 	} else {
-		columns, err = FindColumns(tableName)
+		columns, err = findSql.FindColumns(db, tableName)
 		if err != nil {
 			fmt.Printf("错误! 查找数据库表 '%s'  包含的列失败：%v", tableName, err.Error())
 			return
 		}
-		utils.CreateFile(tableName, ColumnsToStruct(tableName), outDir)
+		utils.CreateFile(tableName, findSql.ColumnsToStruct(tableName, columns), outDir)
 	}
 }
