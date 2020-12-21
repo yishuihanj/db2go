@@ -17,19 +17,19 @@ func CreateFile(_tableName, s string, outDir string) error {
 		os.Mkdir(outDir, os.ModePerm)
 	}
 
-	f, err := os.Create(fmt.Sprintf("%s/%s.go", outDir, SplitUnderline(_tableName)))
+	f, err := os.Create(fmt.Sprintf("%s/%s.go", outDir, _tableName))
 	defer f.Close()
 	if err != nil {
-		fmt.Printf("错误! 创建 %s.go 文件失败，err:%v", SplitUnderline(_tableName), err.Error())
+		fmt.Printf("错误! 创建 %s.go 文件失败，err:%v", _tableName, err.Error())
 		return err
 	} else {
 		_, err = f.Write([]byte(s))
 		if err != nil {
-			fmt.Printf("错误! 创建 %s.go 文件失败，err:%v", SplitUnderline(_tableName), err.Error())
+			fmt.Printf("错误! 创建 %s.go 文件失败，err:%v", _tableName, err.Error())
 			return err
 		}
 	}
-	fmt.Printf("创建 %s.go 文件成功，路径为：%s\n", SplitUnderline(_tableName), f.Name())
+	fmt.Printf("创建 %s.go 文件成功，路径为：%s\n", _tableName, f.Name())
 	return nil
 }
 
