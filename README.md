@@ -28,7 +28,7 @@ $ ./sqltogo -host=127.0.0.1 -port=3306 -user=root -pwd=root -dbname=db_test -gor
 执行
 
 ```shell
-$ ./sqltogo help
+$ ./sqltogo -help
 ```
 
 
