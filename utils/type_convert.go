@@ -28,7 +28,7 @@ func TypeConvert(s string) string {
 		return "int32"
 	}
 	if In(s, []string{"smallint"}) {
-		return "int8"
+		return "int16"
 	}
 	if In(s, []string{"numeric", "decimal", "real"}) {
 		return "decimal.Decimal"
