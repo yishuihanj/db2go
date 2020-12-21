@@ -1,7 +1,7 @@
-package find_sql
+package findSql
 
 import (
-	"sqltogo/interface_sql"
+	"db2go/interface_sql"
 )
 
 //查找该数据库的数据库表

@@ -2,9 +2,9 @@ package interface_sql
 
 import (
 	"database/sql"
+	"db2go/mysql"
+	"db2go/pgsql"
 	"errors"
-	"sqltogo/mysql"
-	"sqltogo/pgsql"
 	"strings"
 )
 
