@@ -3,8 +3,8 @@ package interface_sql
 import (
 	"database/sql"
 	"errors"
-	"pgtogo/mysql"
-	"pgtogo/pgsql"
+	"sqltogo/mysql"
+	"sqltogo/pgsql"
 	"strings"
 )
 

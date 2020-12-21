@@ -2,8 +2,8 @@ package find_sql
 
 import (
 	"fmt"
-	"pgtogo/interface_sql"
-	"pgtogo/utils"
+	"sqltogo/interface_sql"
+	"sqltogo/utils"
 	"strings"
 )
 

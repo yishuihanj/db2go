@@ -5,9 +5,9 @@ import (
 	"flag"
 	"fmt"
 	"os"
-	"pgtogo/find_sql"
-	"pgtogo/interface_sql"
-	"pgtogo/utils"
+	"sqltogo/find_sql"
+	"sqltogo/interface_sql"
+	"sqltogo/utils"
 )
 
 var (

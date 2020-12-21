@@ -1,7 +1,7 @@
 package find_sql
 
 import (
-	"pgtogo/interface_sql"
+	"sqltogo/interface_sql"
 )
 
 //查找该数据库的数据库表
