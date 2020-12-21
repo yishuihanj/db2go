@@ -37,6 +37,7 @@ func init() {
 	flag.BoolVar(&gormtogo.Gorm, "gorm", false, "选填，是否添加 gorm tag，true添加，false不添加，默认不添加")
 	flag.StringVar(&outDir, "outdir", "./go_output", "选填，go 文件输出路径，不设置的话会输出到当前程序所在路径")
 	flag.StringVar(&driver, "driver", "", "必填，需要连接的数据库，现在只支持mysql、pgsql 例如 -driver=mysql，-driver=pgsql")
+	flag.StringVar(&dbtogo.Pkg, "package", "main", "选填，go 文件中 package 的名字，默认为 package main")
 }
 
 func main() {

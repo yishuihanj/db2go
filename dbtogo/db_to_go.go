@@ -7,6 +7,8 @@ import (
 	"fmt"
 )
 
+var Pkg string
+
 //将字段名转换成结构体字段   不包含tag
 func ColumnsToStruct(_tableName string, columns []*findSql.Column) string {
 	columnString := ""
@@ -18,5 +20,5 @@ func ColumnsToStruct(_tableName string, columns []*findSql.Column) string {
 		columnString += singleString
 
 	}
-	return fmt.Sprintf("package main\ntype %s struct {\n%s}", utils.SplitUnderline(_tableName), columnString)
+	return fmt.Sprintf("package %s\ntype %s struct {\n%s}", Pkg,utils.SplitUnderline(_tableName), columnString)
 }
