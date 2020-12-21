@@ -26,14 +26,14 @@ var (
 )
 
 func init() {
-	flag.StringVar(&host, "host", "localhost", "数据库ip，默认为localhost")
+	flag.StringVar(&host, "host", "localhost", "选填，数据库ip，默认为localhost")
 	flag.IntVar(&port, "port", 0, "必填，数据库端口")
 	flag.StringVar(&userName, "user", "", "必填，数据库用户名")
 	flag.StringVar(&pwd, "pwd", "", "必填，数据库密码")
 	flag.StringVar(&dbName, "dbname", "", "必填，数据库名称，否则会报错")
-	flag.StringVar(&tableName, "table", "", "需要导出的数据库表名称，如果不设置的话会将该数据库所有的表导出")
-	flag.BoolVar(&find_sql.Gorm, "gorm", false, "是否添加 gorm tag，true添加，false不添加，默认不添加")
-	flag.StringVar(&outDir, "outdir", "./go_output", ".go 文件输出路径，不设置的话会输出到当前程序所在路径")
+	flag.StringVar(&tableName, "table", "", "选填，需要导出的数据库表名称，如果不设置的话会将该数据库所有的表导出")
+	flag.BoolVar(&find_sql.Gorm, "gorm", false, "选填，是否添加 gorm tag，true添加，false不添加，默认不添加")
+	flag.StringVar(&outDir, "outdir", "./go_output", "选填，go 文件输出路径，不设置的话会输出到当前程序所在路径")
 	flag.StringVar(&driver, "driver", "", "必填，需要连接的数据库，现在只支持mysql、pgsql 例如 -driver=mysql，-driver=pgsql")
 }
 
