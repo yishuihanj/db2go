@@ -1,7 +1,7 @@
 package findSql
 
 import (
-	"db2go/interface_sql"
+	"github.com/yishuihanj/db2go/interface_sql"
 )
 
 type Column struct {

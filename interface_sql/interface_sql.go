@@ -2,10 +2,12 @@ package interface_sql
 
 import (
 	"database/sql"
-	"db2go/mysql"
-	"db2go/pgsql"
+
 	"errors"
 	"strings"
+
+	"github.com/yishuihanj/db2go/mysql"
+	"github.com/yishuihanj/db2go/pgsql"
 )
 
 type SqlInterface interface {
