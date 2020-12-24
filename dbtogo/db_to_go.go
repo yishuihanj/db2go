@@ -1,10 +1,12 @@
 package dbtogo
 
 import (
-	"db2go/findSql"
-	"db2go/gormtogo"
-	"db2go/utils"
+
 	"fmt"
+
+	"github.com/yishuihanj/db2go/findSql"
+	"github.com/yishuihanj/db2go/gormtogo"
+	"github.com/yishuihanj/db2go/utils"
 )
 
 var Pkg string

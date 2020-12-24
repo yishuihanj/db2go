@@ -2,14 +2,16 @@ package main
 
 import (
 	"database/sql"
-	"db2go/dbtogo"
-	"db2go/findSql"
-	"db2go/gormtogo"
-	"db2go/interface_sql"
-	"db2go/utils"
+
 	"flag"
 	"fmt"
 	"os"
+
+	"github.com/yishuihanj/db2go/dbtogo"
+	"github.com/yishuihanj/db2go/findSql"
+	"github.com/yishuihanj/db2go/gormtogo"
+	"github.com/yishuihanj/db2go/interface_sql"
+	"github.com/yishuihanj/db2go/utils"
 )
 
 var (

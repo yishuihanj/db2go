@@ -1,9 +1,11 @@
 package gormtogo
 
 import (
-	"db2go/findSql"
+
 	"fmt"
 	"strings"
+
+	"github.com/yishuihanj/db2go/findSql"
 )
 
 var Gorm bool
