@@ -1,12 +1,11 @@
 package dbtogo
 
 import (
-
 	"fmt"
+	"strings"
 
 	"github.com/yishuihanj/db2go/findSql"
 	"github.com/yishuihanj/db2go/gormtogo"
-	"github.com/yishuihanj/db2go/utils"
 )
 
 var Pkg string
@@ -15,12 +14,21 @@ var Pkg string
 func ColumnsToStruct(_tableName string, columns []*findSql.Column) string {
 	columnString := ""
 	for _, column := range columns {
-		singleString := fmt.Sprintf("\t%s\t%s", utils.SplitUnderline(column.ColumnName), utils.TypeConvert(column.ColumnType))
+		singleString := fmt.Sprintf("\t%s\t%s", splitUnderline(column.ColumnName), typeConvert(column.ColumnType))
 
 		//
 		singleString = singleString + gormtogo.AddGormTag(column) + "\n"
 		columnString += singleString
 
 	}
-	return fmt.Sprintf("package %s\ntype %s struct {\n%s}", Pkg,utils.SplitUnderline(_tableName), columnString)
+	return fmt.Sprintf("package %s\ntype %s struct {\n%s}", Pkg,splitUnderline(_tableName), columnString)
+}
+//如果字符串有下滑线的则将下划线除去 并开头字母大写  例如   v1_user 变为  V1User
+func splitUnderline(s string) string {
+	arr := strings.Split(s, "_")
+	ret := ""
+	for _, v := range arr {
+		ret += strings.Title(v)
+	}
+	return ret
 }

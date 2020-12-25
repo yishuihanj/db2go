@@ -55,7 +55,7 @@ func main() {
 		flag.PrintDefaults()
 	}
 
-	ret := utils.CheckFlagParse(port, userName, pwd, dbName, driver)
+	ret := checkFlagParse(port, userName, pwd, dbName, driver)
 	if ret != "" {
 		fmt.Println(ret)
 		return
@@ -93,7 +93,7 @@ func main() {
 				fmt.Printf("错误! 查找数据库表 '%s'  包含的列失败：%v", tableName, err.Error())
 				return
 			}
-			utils.CreateFile(tName, dbtogo.ColumnsToStruct(tName, columns), outDir)
+			CreateFile(tName, dbtogo.ColumnsToStruct(tName, columns), outDir)
 		}
 	} else {
 		if !utils.In(tableName, tables) {
@@ -105,6 +105,24 @@ func main() {
 			fmt.Printf("错误! 查找数据库表 '%s'  包含的列失败：%v", tableName, err.Error())
 			return
 		}
-		utils.CreateFile(tableName, dbtogo.ColumnsToStruct(tableName, columns), outDir)
+		CreateFile(tableName, dbtogo.ColumnsToStruct(tableName, columns), outDir)
 	}
+}
+func checkFlagParse(port int, user, pwd, dbname, driver string) string {
+	if port <= 0 {
+		return fmt.Sprintf("错误：port 必填，程序退出...")
+	}
+	if user == "" {
+		return fmt.Sprintf("错误：user 必填，程序退出...")
+	}
+	if pwd == "" {
+		return fmt.Sprintf("错误：pwd 必填，程序退出...")
+	}
+	if dbname == "" {
+		return fmt.Sprintf("错误：dbname 必填，程序退出...")
+	}
+	if driver == "" {
+		return fmt.Sprintf("错误：driver 必填，程序退出...")
+	}
+	return ""
 }
