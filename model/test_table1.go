@@ -1,4 +1,4 @@
-package model
+package hello
 type TestTable1 struct {
 	Id	int	`gorm:"column:id;not null;primaryKey;type:serial"`
 	NickName	string	`gorm:"column:nick_name;type:character varying(20);commnet:'我是列注释'"`

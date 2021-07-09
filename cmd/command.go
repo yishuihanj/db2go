@@ -8,14 +8,13 @@ import (
 	"fmt"
 	"os"
 
-
 	"github.com/yishuihanj/db2go/dbtogo"
 	"github.com/yishuihanj/db2go/dialect/gorm"
 	"github.com/yishuihanj/db2go/generator"
 	"github.com/yishuihanj/db2go/utils/flag"
 )
 
-const VERSION = "db2go v1.0.0"
+const VERSION = "v1.0.0"
 
 var (
 	// fs       *flag.FlagSet
@@ -70,16 +69,12 @@ func Launch() *DriverConfig {
 		}
 	}()
 
-	if len(os.Args) == 1 {
-		panic("Command line params is missing")
-	}
-
 	initFlag()
 	if err := flag.Parse(); err != nil {
 		panic(err)
 	}
 
-	if _help {
+	if _help || len(os.Args) == 1 {
 		usage()
 		os.Exit(0)
 	}
@@ -147,17 +142,16 @@ func Check() error {
 	return nil
 }
 
+// ______  ______     ______  _____
+// |     \ |_____]   |  ____ |     |
+// |_____/ |_____] 2 |______||_____|
 func usage() {
+	fmt.Println("\033[1;34m Welcome to db2go\033[0m")
+	fmt.Printf("\033[1;34m  ______  ______     ______  _____ \n  |     \\ |_____]   |  ____ |     |\n  |_____/ |_____] 2 |______||_____| (%v)\033[0m\n", VERSION)
 
-	fmt.Fprintf(os.Stderr, `「Golang」一个实用的数据库对象代码生成器
- ______  ______     ______  _____ 
- |     \ |_____]   |  ____ |     |
- |_____/ |_____] 2 |______||_____|
-
+	fmt.Printf(`
 Usage:
     db2go <command> dbname=<dbName> [option]...
-
-e.g. ./db2go pgsql  -host=localhost -port=5432 -user=postgres -auth=123456 -dbname=deeplink -gorm=true -package=hello
 
 Command:
     mysql	从mysql数据库生成表实体
@@ -176,7 +170,12 @@ Default param:
     mysql: -host=localhost -port=3306 -user=root -auth=""
     pgsql: -host=localhost -port=5432 -user=postgres -auth=postgres
 
+Example:
+    db2go -driver=pgsql -dbname=testdb
+    db2go -driver=pgsql -host=localhost -port=5432 -user=postgres -auth=postgres -dbname=testdb -gorm -package=entity
+
 更多详情，请参考 https://github.com/hollson/db2go
 
 `)
+
 }
