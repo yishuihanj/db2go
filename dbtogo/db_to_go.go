@@ -4,8 +4,9 @@ import (
 	"fmt"
 	"strings"
 
+	"github.com/yishuihanj/db2go/dialect/gorm"
 	"github.com/yishuihanj/db2go/findSql"
-	"github.com/yishuihanj/db2go/gormtogo"
+
 )
 
 var Pkg string
@@ -17,7 +18,7 @@ func ColumnsToStruct(_tableName string, columns []*findSql.Column) string {
 		singleString := fmt.Sprintf("\t%s\t%s", splitUnderline(column.ColumnName), typeConvert(column.ColumnType))
 
 		//
-		singleString = singleString + gormtogo.AddGormTag(column) + "\n"
+		singleString = singleString + gorm.AddGormTag(column) + "\n"
 		columnString += singleString
 
 	}

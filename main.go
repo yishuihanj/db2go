@@ -1,73 +1,33 @@
 package main
 
 import (
-	"database/sql"
-
-	"flag"
 	"fmt"
-	"os"
 
+	"github.com/yishuihanj/db2go/cmd"
 	"github.com/yishuihanj/db2go/dbtogo"
 	"github.com/yishuihanj/db2go/findSql"
-	"github.com/yishuihanj/db2go/gormtogo"
+	"github.com/yishuihanj/db2go/generator"
 	"github.com/yishuihanj/db2go/interface_sql"
-	"github.com/yishuihanj/db2go/utils"
 )
 
-var (
-	db  *sql.DB
-	err error
-	host,
-	userName,
-	pwd,
-	dbName,
-	tableName,
-	outDir,
-	driver string
-	port    int
-	tables  []string
-	columns []*findSql.Column
-)
-
-func init() {
-	flag.StringVar(&host, "host", "localhost", "选填，数据库ip，默认为localhost")
-	flag.IntVar(&port, "port", 0, "必填，数据库端口")
-	flag.StringVar(&userName, "user", "", "必填，数据库用户名")
-	flag.StringVar(&pwd, "pwd", "", "必填，数据库密码")
-	flag.StringVar(&dbName, "dbname", "", "必填，数据库名称，否则会报错")
-	flag.StringVar(&tableName, "table", "", "选填，需要导出的数据库表名称，如果不设置的话会将该数据库所有的表导出")
-	flag.BoolVar(&gormtogo.Gorm, "gorm", false, "选填，是否添加 gorm tag，true添加，false不添加，默认不添加")
-	flag.StringVar(&outDir, "outdir", "./go_output", "选填，go 文件输出路径，不设置的话会输出到当前程序所在路径")
-	flag.StringVar(&driver, "driver", "", "必填，需要连接的数据库，现在只支持mysql、pgsql 例如 -driver=mysql，-driver=pgsql")
-	flag.StringVar(&dbtogo.Pkg, "package", "main", "选填，go 文件中 package 的名字，默认为 package main")
+//go:generate go build
+//  ./db2go pgsql  -Host=localhost -port=5432 -User=postgres -pwd=123456 -dbname=deeplink -gorm=true -package=hello
+func main() {
+	driver, err := cmd.InitCommand()
+	if err == nil && driver != generator.Invalid {
+		fmt.Println("========", driver.String())
+		dosometing("pgsql")
+	}
 }
 
-func main() {
-	defer func() {
-		if e := recover(); e != nil {
-			fmt.Printf("recover from a fatal error : %v \n ", e)
-		}
-	}()
-	flag.Parse()
-
-	flag.Usage = func() {
-		fmt.Fprintf(os.Stderr, "Usage of %s:\n", "question")
-		flag.PrintDefaults()
-	}
-
-	ret := checkFlagParse(port, userName, pwd, dbName, driver)
-	if ret != "" {
-		fmt.Println(ret)
-		return
-	}
-
+func dosometing(driver string) {
 	model, err := interface_sql.SelectDriver(driver)
 	if err != nil {
 		fmt.Println(err.Error())
 		return
 	}
 
-	err = model.Init(userName, pwd, host, port, dbName)
+	err = model.Init(cmd.User, cmd.Pwd, cmd.Host, cmd.Port, cmd.DbName)
 	if err != nil {
 		fmt.Println("错误，连接数据库错误：", err.Error())
 		return
@@ -75,54 +35,23 @@ func main() {
 
 	defer model.GetDB().Close()
 
-	tables, err = findSql.FindTables(model)
+	cmd.Tables, err = findSql.FindTables(model)
 	if err != nil {
 		fmt.Println("错误! 查看数据库表失败：", err.Error())
 		return
 	}
-	if len(tables) == 0 {
+	if len(cmd.Tables) == 0 {
 		fmt.Println("警告：当前数据库中数据库表的数量为0，程序退出...")
 		return
 	}
 
-	if tableName == "" {
-		fmt.Println("警告：没有设置table，将要导出数据库所有的表...")
-		for _, tName := range tables {
-			columns, err = findSql.FindColumns(model, tName)
-			if err != nil {
-				fmt.Printf("错误! 查找数据库表 '%s'  包含的列失败：%v", tableName, err.Error())
-				return
-			}
-			CreateFile(tName, dbtogo.ColumnsToStruct(tName, columns), outDir)
-		}
-	} else {
-		if !utils.In(tableName, tables) {
-			fmt.Println("错误：数据库中没有您想要导出的数据库表，程序退出...")
-			return
-		}
-		columns, err = findSql.FindColumns(model, tableName)
+	fmt.Println("警告：没有设置table，将要导出数据库所有的表...")
+	for _, tName := range cmd.Tables {
+		cmd.Columns, err = findSql.FindColumns(model, tName)
 		if err != nil {
-			fmt.Printf("错误! 查找数据库表 '%s'  包含的列失败：%v", tableName, err.Error())
+			fmt.Printf("错误! 查找数据库表 '%s'  包含的列失败：%v", "tableName", err.Error())
 			return
 		}
-		CreateFile(tableName, dbtogo.ColumnsToStruct(tableName, columns), outDir)
+		generator.CreateFile(tName, dbtogo.ColumnsToStruct(tName, cmd.Columns), cmd.Out)
 	}
-}
-func checkFlagParse(port int, user, pwd, dbname, driver string) string {
-	if port <= 0 {
-		return fmt.Sprintf("错误：port 必填，程序退出...")
-	}
-	if user == "" {
-		return fmt.Sprintf("错误：user 必填，程序退出...")
-	}
-	if pwd == "" {
-		return fmt.Sprintf("错误：pwd 必填，程序退出...")
-	}
-	if dbname == "" {
-		return fmt.Sprintf("错误：dbname 必填，程序退出...")
-	}
-	if driver == "" {
-		return fmt.Sprintf("错误：driver 必填，程序退出...")
-	}
-	return ""
 }

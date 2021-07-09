@@ -1,7 +1,7 @@
 package utils
 
 import (
-	_ "github.com/lib/pq"
+	// _ "github.com/lib/pq"
 )
 
 //数组中是否包含该字符

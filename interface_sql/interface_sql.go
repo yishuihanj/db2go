@@ -6,8 +6,8 @@ import (
 	"errors"
 	"strings"
 
-	"github.com/yishuihanj/db2go/mysql"
-	"github.com/yishuihanj/db2go/pgsql"
+	"github.com/yishuihanj/db2go/dialect/mysql"
+	"github.com/yishuihanj/db2go/dialect/pgsql"
 )
 
 type SqlInterface interface {
