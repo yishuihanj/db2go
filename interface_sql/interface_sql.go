@@ -2,6 +2,7 @@ package interface_sql
 
 import (
 	"database/sql"
+	"fmt"
 
 	"errors"
 	"strings"
@@ -30,6 +31,7 @@ func SelectDriver(driver string) (SqlInterface, error) {
 	driver = strings.ToLower(driver)
 	model, ok := driverMap[driver]
 	if !ok {
+		fmt.Println(driver)
 		return nil, errors.New("错误：该程序不包含该数据库的导出功能，请检查 -driver 是否设置正确...")
 	}
 	return model, nil

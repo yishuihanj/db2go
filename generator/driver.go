@@ -4,14 +4,58 @@
 
 package generator
 
+// database driver type
 type Driver int
 
 const (
-	Invalid  Driver = 0 // 无效的
-	Mysql           = 1
-	Postgres        = 2
+	Unknown Driver = iota
+	MySQL
+	PostgreSQL
+	SQLite
+	MongoDB
+	MariaDB
+	SQLServer
 )
 
+// driver name
 func (d Driver) String() string {
-	return []string{"Invalid", "Mysql", "Postgres"}[d]
+	return []string{"MySQL", "PostgreSQL", "SQLite", "MongoDB", "MariaDB", "SQLServer"}[d-1]
+}
+
+// driver short name
+func (d Driver) Name() string {
+	return []string{"mysql", "pgsql", "sqlite", "mongo", "maria", "mssql"}[d-1]
+}
+
+// get driver value by driver short name
+func DriverValue(name string) Driver {
+	if d, ok := map[string]Driver{
+		"mysql":  MySQL,
+		"pgsql":  PostgreSQL,
+		"sqlite": SQLite,
+		"mongo":  MongoDB,
+		"maria":  MariaDB,
+		"mssql":  SQLServer,
+	}[name]; ok {
+		return d
+	}
+	return Unknown
+}
+
+// Determine whether the driver is supported
+func Supported(name string) bool {
+	ds := []Driver{
+		MySQL,
+		PostgreSQL,
+		// SQLite,
+		// MongoDB,
+		// MariaDB,
+		// SQLServer,
+	}
+	for _, v := range ds {
+		if DriverValue(name) == v {
+			return true
+		}
+	}
+	return false
 }
