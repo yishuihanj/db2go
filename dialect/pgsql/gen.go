@@ -61,7 +61,7 @@ func (g *Database) tablesSQL() string {
 
 // 查询数据表定义SQL
 func (g *Database) columnsSQL(tableName string) string {
-	var tableSql = fmt.Sprintf(`
+	return fmt.Sprintf(`
 SELECT  a.attname AS field_name,	--字段表名
 		a.attnotnull AS not_null,	--是否为NULL
 		a.attlen AS field_size,		-- 字段大小
@@ -86,7 +86,6 @@ FROM pg_attribute a
 WHERE a.attisdropped = FALSE AND a.attnum > 0 AND n.nspname = 'public' AND C.relname ='%s' -- 表名
 ORDER BY a.attnum
 `, tableName)
-	return tableSql
 }
 
 //
@@ -95,7 +94,7 @@ func (g *Database) Tables() (ret []core.Table, err error) {
 	if err != nil {
 		return nil, err
 	}
-	fmt.Printf(" 💻 连接到数据库：%s\n",g.source())
+	fmt.Printf(" 💻 连接数据库: %s\n", g.source())
 	defer _db.Close()
 
 	rows, err := _db.Query(g.tablesSQL())

@@ -50,20 +50,10 @@ func Generate(driver core.DatabaseDriver, cfg *core.Config) error {
 		return errors.New("the count of tables in the database is 0")
 	}
 
-	// // 解析模板
-	// t := template.New("text")                             // 定义模板对象
-	// t = t.Funcs(template.FuncMap{"ifImports": IfImports}) // 控制自定义元素
-	// t = t.Funcs(template.FuncMap{"ifComment": IfComment}) // 控制自定义元素
-	// t, err = t.Parse(_template)                           //
-	// if err != nil {
-	// 	panic(err)
-	// }
-	// fmt.Println(cfg)
-
 	if err := os.MkdirAll(cfg.Out, os.ModePerm); err != nil {
 		return err
 	}
-	// fmt.Printf(" 📁 输出目录：%s\n", cfg.Out)
+
 	// 单文件输出
 	if cfg.Pile {
 		gofile := utils.PathTrim(fmt.Sprintf("%s/%s.go", cfg.Out, cfg.DbName))
@@ -91,7 +81,7 @@ func Generate(driver core.DatabaseDriver, cfg *core.Config) error {
 		if err := Execute(f, data); err != nil {
 			return err
 		}
-		fmt.Printf(" 📖 生成文件：%s\n", gofile)
+		fmt.Printf(" 🚀 生成文件: %s\n", gofile)
 	}
 	return nil
 }
