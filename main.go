@@ -2,56 +2,28 @@ package main
 
 import (
 	"fmt"
+	"os"
+	"os/exec"
 
-	"github.com/yishuihanj/db2go/cmd"
-	"github.com/yishuihanj/db2go/dbtogo"
-	"github.com/yishuihanj/db2go/findSql"
-	"github.com/yishuihanj/db2go/generator"
-	"github.com/yishuihanj/db2go/interface_sql"
+	"github.com/yishuihanj/db2go/builder"
 )
 
-var Tables []string
-var Columns []*findSql.Column
-
 //go:generate go build
-//  ./db2go -driver=pgsql  -host=localhost -port=5432 -user=postgres -auth=123456 -dbname=deeplink -gorm=true -package=hello
 func main() {
-	cfg := cmd.Launch()
-	dosometing(cfg)
-}
+	// 加载命令行参数
+	driver, cfg := builder.Load()
 
-func dosometing(cfg *cmd.DriverConfig) {
-	model, err := interface_sql.SelectDriver(cfg.Driver)
-	if err != nil {
+	// 执行生成命令
+	if err := builder.Generate(driver, cfg); err != nil {
 		fmt.Println(err.Error())
-		return
+		os.Exit(1)
 	}
 
-	err = model.Init(cfg.User, cfg.Auth, cfg.Host, cfg.Port, cfg.DbName)
-	if err != nil {
-		fmt.Println("错误，连接数据库错误：", err.Error())
-		return
+	// 格式化
+	cmd := exec.Command("go", "fmt", cfg.Out)
+	if err := cmd.Start(); err != nil {
+		fmt.Printf("format go files failed,%v", err)
+		os.Exit(1)
 	}
-
-	defer model.GetDB().Close()
-
-	Tables, err = findSql.FindTables(model)
-	if err != nil {
-		fmt.Println("错误! 查看数据库表失败：", err.Error())
-		return
-	}
-	if len(Tables) == 0 {
-		fmt.Println("警告：当前数据库中数据库表的数量为0，程序退出...")
-		return
-	}
-
-	fmt.Println("警告：没有设置table，将要导出数据库所有的表...")
-	for _, tName := range Tables {
-		Columns, err = findSql.FindColumns(model, tName)
-		if err != nil {
-			fmt.Printf("错误! 查找数据库表 '%s'  包含的列失败：%v", "tableName", err.Error())
-			return
-		}
-		generator.CreateFile(tName, dbtogo.ColumnsToStruct(tName, Columns), cfg.Out)
-	}
+	fmt.Printf(" ✅  完成任务\n\n")
 }

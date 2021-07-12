@@ -3,7 +3,7 @@ all: build
 ## build@编译程序。
 .PHONY:build
 build:clean
-	@go build
+	@go build -o ./bin/
 	@echo "\033[31m ☕️ 编译完成\033[0m";
 
 ## clean@清理编译、日志和缓存等数据。
@@ -16,6 +16,8 @@ clean:
 	@rm -rf ./temp;
 	@rm -rf ./model;
 	@rm -rf ./db2go;
+	@rm -rf ./bin;
+	@rm -rf ./_gen;
 	@echo "\033[31m ✅  清理完毕\033[0m";
 
 
@@ -39,7 +41,7 @@ push:commit
 ## test@执行测试。
 .PHONY:test
 test: build
-	@./db2go -driver=pgsql  -host=localhost -port=5432 -user=postgres -auth=123456 -dbname=deeplink -gorm=true -package=hello
+	@./bin/db2go -driver=pgsql -host=localhost -port=5432 -user=postgres -auth=123456 -dbname=deeplink -gorm=true -package=hello
 
 
 ## help@查看make帮助。
