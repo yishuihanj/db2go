@@ -5,7 +5,7 @@ import (
 	"os"
 	"os/exec"
 
-	"github.com/yishuihanj/db2go/builder"
+    	"github.com/yishuihanj/db2go/builder"
 )
 
 //go:generate go build
