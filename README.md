@@ -1,3 +1,5 @@
+
+
 # db2go
 一个使 mysql、pgsql.sql 数据库表自动生成 go struct 的工具
 
@@ -46,7 +48,7 @@ Usage of db2go.exe:
   -outdir string
         选填，go 文件输出路径，不设置的话会输出到当前程序所在路径 (default "./go_output")
   -package string
-        选填，go 文件中 package 的名字，默认为 package main (default "main")
+        选填，go 文件中 package 的名字，默认为 package model (default "model")
   -port int
         必填，数据库端口
   -pwd string
@@ -56,4 +58,3 @@ Usage of db2go.exe:
   -user string
         必填，数据库用户名
 ```
-
